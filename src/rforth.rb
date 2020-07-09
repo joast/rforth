@@ -218,12 +218,10 @@ class RForth
     begin
       return Integer( word )
     rescue
-      puts $!
     end
     begin
       return Float( word )
     rescue
-      puts $!
     end
     nil
   end
