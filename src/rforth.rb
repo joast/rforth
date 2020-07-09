@@ -7,7 +7,7 @@ module PrimitiveWords
   end
 
   def q_dup
-    @stack << @stack.last unless @stack.last == 0 
+    @stack << @stack.last unless @stack.last == 0
   end
 
   def drop
@@ -36,7 +36,7 @@ module PrimitiveWords
   end
 
   def mult
-    @stack << (@stack.pop * @stack.pop) 
+    @stack << (@stack.pop * @stack.pop)
   end
 
   def subtract
@@ -51,7 +51,7 @@ module PrimitiveWords
     @stack << b / a
   end
 
-  def dot 
+  def dot
     @s_out.print( @stack.pop )
   end
 
@@ -244,7 +244,7 @@ class RForth
   end
 
   def is_space?( ch )
-    /\W/ =~ ch.chr
+    /\s/ =~ ch.chr
   end
 
   def run
@@ -256,4 +256,4 @@ class RForth
   end
 end
 
-RForth.new.run 
+RForth.new.run
