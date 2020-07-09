@@ -90,7 +90,7 @@ class Dictionary
     raise "No such word #{old_name}" unless entry
     new_entry = entry.dup
     new_entry[:name] = name
-    @entries[name] = entry
+    @entries[name] = new_entry
   end
 
   def []( name )
