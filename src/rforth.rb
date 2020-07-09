@@ -132,7 +132,10 @@ end
 class Dictionary
   def initialize(&block)
     @entries = {}
-    block&.call(self)
+
+    # Could use "safe navigation" (&.) here, but I believe it is better to be
+    # verbose in this case to make the intent very obvious.
+    block.call(self) if block # rubocop:disable Style/SafeNavigation
   end
 
   def word(name, &block)
@@ -178,7 +181,7 @@ class RForth
       word(m.to_s, &method_clojure)
     end
 
-    add_aliases
+    add_primitive_real_names_to_dictionary
 
     word(':')     { read_and_define_word }
     word('bye')   { exit }
@@ -186,7 +189,7 @@ class RForth
     immediate_word('\\') { @s_in.readline }
   end
 
-  def add_aliases
+  def add_primitive_real_names_to_dictionary
     alias_word('?dup', 'q_dup')
     alias_word('+', 'plus')
     alias_word('*', 'mult')
