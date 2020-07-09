@@ -2,29 +2,29 @@ require 'pp'
 
 module PrimitiveWords
 
-  def dup
+  def dup(name)
     if @stack.empty?
-      $stderr.puts 'dup stack underflow'
+      $stderr.puts "#{name} stack underflow"
     else
       @stack << @stack.last
     end
   end
 
-  def q_dup
+  def q_dup(_name)
     @stack << @stack.last unless @stack.empty?
   end
 
-  def drop
+  def drop(name)
     if @stack.empty?
-      $stderr.puts 'drop stack underflow'
+      $stderr.puts "#{name} stack underflow"
     else
       @stack.pop
     end
   end
 
-  def swap
+  def swap(name)
     if @stack.size < 2
-      $stderr.print 'swap stack underflow: '
+      $stderr.print "#{name} stack underflow: "
       dot_s
       @stack.clear
     else
@@ -32,9 +32,9 @@ module PrimitiveWords
     end
   end
 
-  def over
+  def over(name)
     if @stack.size < 2
-      $stderr.print 'over stack underflow: '
+      $stderr.print "#{name} stack underflow: "
       dot_s
       @stack.clear
     else
@@ -44,9 +44,9 @@ module PrimitiveWords
     end
   end
 
-  def rot
+  def rot(name)
     if @stack.size < 3
-      $stderr.print 'rot stack underflow: '
+      $stderr.print "#{name} stack underflow: "
       dot_s
       @stack.clear
     else
@@ -57,9 +57,9 @@ module PrimitiveWords
     end
   end
 
-  def plus
+  def plus(name)
     if @stack.size < 2
-      $stderr.print 'plus stack underflow: '
+      $stderr.print "#{name} stack underflow: "
       dot_s
       @stack.clear
     else
@@ -67,9 +67,9 @@ module PrimitiveWords
     end
   end
 
-  def mult
+  def mult(name)
     if @stack.size < 2
-      $stderr.print 'mult stack underflow: '
+      $stderr.print "#{name} stack underflow: "
       dot_s
       @stack.clear
     else
@@ -77,9 +77,9 @@ module PrimitiveWords
     end
   end
 
-  def subtract
+  def subtract(name)
     if @stack.size < 2
-      $stderr.print 'subtract stack underflow: '
+      $stderr.print "#{name} stack underflow: "
       dot_s
       @stack.clear
     else
@@ -89,9 +89,9 @@ module PrimitiveWords
     end
   end
 
-  def divide
+  def divide(name)
     if @stack.size < 2
-      $stderr.print 'divide stack underflow: '
+      $stderr.print "#{name} stack underflow: "
       dot_s
       @stack.clear
     else
@@ -101,23 +101,23 @@ module PrimitiveWords
     end
   end
 
-  def dot
+  def dot(name)
     if @stack.empty?
-      $stderr.puts 'dot stack underflow'
+      $stderr.puts "#{name} stack underflow"
     else
       @s_out.print( @stack.pop )
     end
   end
 
-  def cr
+  def cr(_name)
     @s_out.print "\n"
   end
 
-  def dot_s
+  def dot_s(_name)
     @s_out.print( "<#{@stack.size}> #{@stack}\n" )
   end
 
-  def dot_d
+  def dot_d(_name)
     pp @dictionary
   end
 
@@ -220,13 +220,13 @@ class RForth
       entry = resolve_word( word )
       raise "no such word: #{word}" unless entry
       if entry[:immediate]
-        entry[:block].call
+        entry[:block].call(entry[:name])
       else
-        blocks << entry[:block]
+        blocks << [ entry[:block], entry[:name] ]
       end
     end
     proc do
-      blocks.each {|b| b.call}
+      blocks.each {|b, n| b.call(n)}
     end
   end
 
@@ -260,7 +260,7 @@ class RForth
   def forth_eval( word )
     entry = resolve_word(word)
     if entry
-      entry[:block].call
+      entry[:block].call(entry[:name])
     else
       @s_out.puts "#{word} ??"
     end
