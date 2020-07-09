@@ -113,7 +113,7 @@ module PrimitiveWords
     @s_out.print "\n"
   end
 
-  def dot_s(_name)
+  def dot_s(_name = nil)
     @s_out.print( "<#{@stack.size}> #{@stack}\n" )
   end
 
