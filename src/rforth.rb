@@ -236,11 +236,24 @@ class RForth
   #  new-word w1 w2 w3 ;
   def read_and_define_word
     name = read_word
+
+    if name.nil?
+      @s_out.print "\nEOF during word definition\n"
+      exit 1
+    end
+
     words = []
+
     while (word = read_word)
       break if word == ';'
       words << word
     end
+
+    if word.nil?
+      @s_out.print "\nEOF during word definition\n"
+      exit 1
+    end
+
     @dictionary.word(name, &compile_words( *words ))
   end
 
@@ -281,20 +294,23 @@ class RForth
   end
 
   def read_word
-    result = nil
-    ch = nil
-    until @s_in.eof?
-      ch = @s_in.readchar
-      if result and is_space?(ch)
+    result = ''
+
+    loop do
+      begin
+        ch = @s_in.readchar
+      rescue EOFError
         break
-      elsif result.nil?
-        result = ch
+      end
+
+      if is_space?(ch)
+        break unless result.empty?
       else
         result << ch
       end
     end
-    return result if result
-    nil
+
+    result.empty? ? nil : result
   end
 
   def is_space?( ch )
@@ -302,9 +318,10 @@ class RForth
   end
 
   def run
-    until $stdin.eof?
+    loop do
       @s_out.flush
       word = read_word
+      break if word.nil?
       forth_eval( word )
     end
   end
