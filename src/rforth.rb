@@ -3,64 +3,118 @@ require 'pp'
 module PrimitiveWords
 
   def dup
-    @stack << @stack.last
+    if @stack.empty?
+      $stderr.puts 'dup stack underflow'
+    else
+      @stack << @stack.last
+    end
   end
 
   def q_dup
-    @stack << @stack.last unless @stack.last == 0
+    @stack << @stack.last unless @stack.empty?
   end
 
   def drop
-    @stack.pop
+    if @stack.empty?
+      $stderr.puts 'drop stack underflow'
+    else
+      @stack.pop
+    end
   end
 
   def swap
-    @stack += [@stack.pop, @stack.pop]
+    if @stack.size < 2
+      $stderr.print 'swap stack underflow: '
+      dot_s
+      @stack.clear
+    else
+      @stack += [@stack.pop, @stack.pop]
+    end
   end
 
   def over
-    a = @stack.pop
-    b = @stack.pop
-    @stack << b << a << b
+    if @stack.size < 2
+      $stderr.print 'over stack underflow: '
+      dot_s
+      @stack.clear
+    else
+      a = @stack.pop
+      b = @stack.pop
+      @stack << b << a << b
+    end
   end
 
   def rot
-    a = @stack.pop
-    b = @stack.pop
-    c = @stack.pop
-    @stack << b << a << c
+    if @stack.size < 3
+      $stderr.print 'rot stack underflow: '
+      dot_s
+      @stack.clear
+    else
+      a = @stack.pop
+      b = @stack.pop
+      c = @stack.pop
+      @stack << b << a << c
+    end
   end
 
   def plus
-    @stack << (@stack.pop + @stack.pop)
+    if @stack.size < 2
+      $stderr.print 'plus stack underflow: '
+      dot_s
+      @stack.clear
+    else
+      @stack << (@stack.pop + @stack.pop)
+    end
   end
 
   def mult
-    @stack << (@stack.pop * @stack.pop)
+    if @stack.size < 2
+      $stderr.print 'mult stack underflow: '
+      dot_s
+      @stack.clear
+    else
+      @stack << (@stack.pop * @stack.pop)
+    end
   end
 
   def subtract
-    a = @stack.pop
-    b = @stack.pop
-    @stack << b - a
+    if @stack.size < 2
+      $stderr.print 'subtract stack underflow: '
+      dot_s
+      @stack.clear
+    else
+      a = @stack.pop
+      b = @stack.pop
+      @stack << b - a
+    end
   end
 
   def divide
-    a = @stack.pop
-    b = @stack.pop
-    @stack << b / a
+    if @stack.size < 2
+      $stderr.print 'divide stack underflow: '
+      dot_s
+      @stack.clear
+    else
+      a = @stack.pop
+      b = @stack.pop
+      @stack << b / a
+    end
   end
 
   def dot
-    @s_out.print( @stack.pop )
+    if @stack.empty?
+      $stderr.puts 'dot stack underflow'
+    else
+      @s_out.print( @stack.pop )
+    end
   end
 
   def cr
-    @s_out.puts
+    @s_out.print "\n"
   end
 
   def dot_s
-    @s_out.print( "#{@stack}\n" )
+    @s_out.print( "<#{@stack.size}> #{@stack}\n" )
   end
 
   def dot_d
