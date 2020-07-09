@@ -6,7 +6,7 @@
 
 require 'pp'
 
-# place holder
+# forth primitives
 module PrimitiveWords
   def dup(name)
     if @stack.empty?
@@ -128,7 +128,7 @@ module PrimitiveWords
   end
 end
 
-# place holder
+# The forth dictionnary.
 class Dictionary
   def initialize(&block)
     @entries = {}
@@ -162,7 +162,7 @@ class Dictionary
   end
 end
 
-# place holder
+# The forth controller. Handles input, parsing, running, etc.
 class RForth
   include PrimitiveWords
 
