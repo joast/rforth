@@ -24,4 +24,4 @@ A few minor examples:
     .
     4
 
-This version is a fork of russ forth by [ananthrk/fogus](http://fogus.me/) which was based on a sweet hack by [Russ Olsen](http://jroller.com/rolsen/) presented to fogus in a [GoodReads comment](http://www.goodreads.com/review/show/120660311).
+This version is a fork of russ forth by [ananthrk](https://github.com/ananthrk)/[fogus](http://fogus.me/) which was based on a sweet hack by [Russ Olsen](http://jroller.com/rolsen/) presented to fogus in a [GoodReads comment](http://www.goodreads.com/review/show/120660311).
