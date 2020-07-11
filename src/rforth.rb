@@ -2,165 +2,12 @@
 
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
-# rubocop:disable Metrics/ModuleLength
 
-require 'pp'
-
-# forth primitives
-module PrimitiveWords
-  def dup(name)
-    if @stack.empty?
-      $stderr.print "#{name} stack underflow\n"
-    else
-      @stack << @stack.last
-    end
-  end
-
-  def q_dup(_name)
-    @stack << @stack.last unless @stack.empty?
-  end
-
-  def drop(name)
-    if @stack.empty?
-      $stderr.print "#{name} stack underflow\n"
-    else
-      @stack.pop
-    end
-  end
-
-  def swap(name)
-    if @stack.size < 2
-      $stderr.print "#{name} stack underflow: "
-      dot_s
-      @stack.clear
-    else
-      @stack += [@stack.pop, @stack.pop]
-    end
-  end
-
-  def over(name)
-    if @stack.size < 2
-      $stderr.print "#{name} stack underflow: "
-      dot_s
-      @stack.clear
-    else
-      a = @stack.pop
-      b = @stack.pop
-      @stack << b << a << b
-    end
-  end
-
-  def rot(name)
-    if @stack.size < 3
-      $stderr.print "#{name} stack underflow: "
-      dot_s
-      @stack.clear
-    else
-      a = @stack.pop
-      b = @stack.pop
-      c = @stack.pop
-      @stack << b << a << c
-    end
-  end
-
-  def plus(name)
-    if @stack.size < 2
-      $stderr.print "#{name} stack underflow: "
-      dot_s
-      @stack.clear
-    else
-      @stack << (@stack.pop + @stack.pop)
-    end
-  end
-
-  def mult(name)
-    if @stack.size < 2
-      $stderr.print "#{name} stack underflow: "
-      dot_s
-      @stack.clear
-    else
-      @stack << (@stack.pop * @stack.pop)
-    end
-  end
-
-  def subtract(name)
-    if @stack.size < 2
-      $stderr.print "#{name} stack underflow: "
-      dot_s
-      @stack.clear
-    else
-      a = @stack.pop
-      b = @stack.pop
-      @stack << b - a
-    end
-  end
-
-  def divide(name)
-    if @stack.size < 2
-      $stderr.print "#{name} stack underflow: "
-      dot_s
-      @stack.clear
-    else
-      a = @stack.pop
-      b = @stack.pop
-      @stack << b / a
-    end
-  end
-
-  def dot(name)
-    if @stack.empty?
-      $stderr.print "#{name} stack underflow\n"
-    else
-      @s_out.print(@stack.pop)
-    end
-  end
-
-  def cr(_name)
-    @s_out.print "\n"
-  end
-
-  def dot_s(_name = nil)
-    @s_out.print("<#{@stack.size}> #{@stack}\n")
-  end
-
-  def dot_d(_name)
-    pp @dictionary
-  end
-end
-
-# The forth dictionnary.
-class Dictionary
-  def initialize(&block)
-    @entries = {}
-
-    # Could use "safe navigation" (&.) here, but I believe it is better to be
-    # verbose in this case to make the intent very obvious.
-    block.call(self) if block # rubocop:disable Style/SafeNavigation
-  end
-
-  def word(name, &block)
-    @entries[name] = { name: name, block: block, immediate: false }
-    self
-  end
-
-  def immediate_word(name, &block)
-    @entries[name] = { name: name, block: block, immediate: true }
-    self
-  end
-
-  def alias_word(name, old_name)
-    entry = self[old_name]
-    raise "No such word #{old_name}" unless entry
-
-    new_entry = entry.dup
-    new_entry[:name] = name
-    @entries[name] = new_entry
-  end
-
-  def [](name)
-    @entries[name]
-  end
-end
+require_relative 'dictionary'
+require_relative 'prim_math'
+require_relative 'prim_io'
+require_relative 'prim_stack'
+require_relative 'prim_misc'
 
 # The forth controller. Handles input, parsing, running, etc.
 class RForth
@@ -356,6 +203,5 @@ end
 
 # rubocop:enable Metrics/ClassLength
 # rubocop:enable Metrics/MethodLength
-# rubocop:enable Metrics/ModuleLength
 
 RForth.new.run
